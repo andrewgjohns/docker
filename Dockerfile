@@ -28,7 +28,7 @@ VOLUME /var/jenkins_home
 RUN mkdir -p /usr/share/jenkins/ref/init.groovy.d
 
 ENV TINI_VERSION 0.13.2
-ENV TINI_BINARY tini-static-arm64
+ENV TINI_BINARY tini-arm64
 
 # Use tini as subreaper in Docker container to adopt zombie processes 
 RUN curl -fsSL https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/${TINI_BINARY} -o /bin/tini && chmod +x /bin/tini
