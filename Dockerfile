@@ -1,4 +1,5 @@
-FROM openjdk:8-jdk
+FROM resin/rpi-raspbian:jessie
+MAINTAINER Andrew Johns
 
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
@@ -15,6 +16,7 @@ ARG gid=1000
 # ensure you use the same uid
 RUN groupadd -g ${gid} ${group} \
     && useradd -d "$JENKINS_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
+	
 
 # Jenkins home directory is a volume, so configuration and build history 
 # can be persisted and survive image upgrades
@@ -25,12 +27,12 @@ VOLUME /var/jenkins_home
 # or config file with your custom jenkins Docker image.
 RUN mkdir -p /usr/share/jenkins/ref/init.groovy.d
 
-ENV TINI_VERSION 0.13.1
-ENV TINI_SHA 0f78709a0e3c80e7c9119fdc32c2bc0f4cfc4cab
+ENV TINI_VERSION 0.13.2
+ENV TINI_BINARY tini-static-arm64
 
 # Use tini as subreaper in Docker container to adopt zombie processes 
-RUN curl -fsSL https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-static-amd64 -o /bin/tini && chmod +x /bin/tini \
-  && echo "$TINI_SHA  /bin/tini" | sha1sum -c -
+RUN curl -fsSL https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/${TINI_BINARY} -o /bin/tini && chmod +x /bin/tini \
+ 
 
 COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groovy
 
